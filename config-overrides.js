@@ -1,10 +1,9 @@
 const { override, addWebpackResolve } = require("customize-cra");
+const platform = process.env.PLATFORM || "web";
 
 function decorateWithPlatform(platform, currentExtensions) {
   return currentExtensions.flatMap((ext) => [`.${platform}${ext}`, `${ext}`]);
 }
-
-const platform = process.env.PLATFORM || "web";
 
 module.exports = override(
   addWebpackResolve({
@@ -17,5 +16,11 @@ module.exports = override(
       ".tsx",
       ".json",
     ]),
-  })
+  }),
+  (config) => {
+    // This is so that decorateWithPlatform is consistent
+    delete config.cache;
+
+    return config;
+  }
 );
